@@ -36,29 +36,48 @@ def complete_scenario(name, scenario):
 
 
 scenarios = {
-    "final_demo": [
-        "Hello, I need to book an appointment",
-        "I am having teeth pain",
-        "I'm mister Smith",
-        "Monday at 10am",
-        "Okay, then on Monday at 3pm",
-        "Yes please",
-        "Perfect, what is the nearest metro sataion?",
-        "By the way, could you ask my dentist if I can take a painkiller ?",
+    "prise_rdv_simple": [
+        "Bonjour, je voudrais prendre rendez-vous pour un détartrage",
+        "Sophie Martin",
+        "Mardi prochain si possible",
+        "11h ce serait parfait",
+        "Oui confirmez s'il vous plaît"
     ],
-    "ask_doctor_demo": [
-        "Hello, I have a high teeth pain. Please ask a dentist what I should do.",
+    "urgence_dentaire": [
+        "Bonjour, j'ai très mal aux dents, c'est urgent",
+        "Thomas Dubois",
+        "Le plus tôt possible, aujourd'hui si vous pouvez",
+        "Oui 9h ça me va très bien merci"
     ],
-    "basic_scenario": [
-        "Hello, I need to book an appointment",
-        "On Monday at 3pm",
-        "Okay, then on Tuesday at 4pm",
-        "Great, thanks",
-        "Okay, bye",
+    "question_puis_rdv": [
+        "Bonjour, combien coûte un blanchiment dentaire ?",
+        "D'accord, je voudrais prendre rendez-vous pour ça",
+        "Marie Lambert",
+        "Jeudi 14 novembre",
+        "10h si c'est disponible",
+        "Parfait, merci beaucoup"
     ],
-    "information_scenario": [
-        "Hello, what is the nearest metro sataion to the clinic?",
+    "questions_cabinet": [
+        "Bonjour, vous êtes où exactement ?",
+        "Vous êtes ouverts le samedi ?",
+        "Vous prenez la carte bancaire ?",
+        "Merci beaucoup, au revoir"
     ],
+    "changement_horaire": [
+        "Bonjour, je voudrais un rendez-vous pour des soins",
+        "Jean Dupont",
+        "Mercredi à 15h",
+        "Non finalement, plutôt jeudi",
+        "14h c'est possible ?",
+        "Oui merci"
+    ],
+    "premiere_visite": [
+        "Bonjour, c'est pour une première consultation",
+        "Claire Rousseau",
+        "Qu'est-ce que je dois apporter ?",
+        "Vendredi matin si possible",
+        "9h30 c'est parfait"
+    ]
 }
 
 for name, scenario in scenarios.items():
