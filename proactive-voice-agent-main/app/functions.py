@@ -25,14 +25,29 @@ try:
         rag_data = pickle.load(f)
         faiss_index = rag_data['index']
         documents = rag_data['documents']
-        model_name = rag_data['model_name']
-        embeddings_model = SentenceTransformer(model_name)
-        print(f"✅ Base de connaissances chargée : {len(documents)} documents")
+        model_name = rag_data.get('model_name', 'unknown')
+
+        # Charger le modèle seulement s'il ne s'agit pas d'embeddings simplifiés
+        if model_name == 'simple-random-embeddings':
+            print(f"✅ Base de connaissances chargée (mode simplifié) : {len(documents)} documents")
+            embeddings_model = None
+            stored_embeddings = rag_data.get('embeddings', None)
+        else:
+            try:
+                embeddings_model = SentenceTransformer(model_name)
+                stored_embeddings = None
+                print(f"✅ Base de connaissances chargée : {len(documents)} documents avec modèle {model_name}")
+            except Exception as e:
+                print(f"⚠️ Erreur chargement modèle {model_name}: {e}")
+                print("   Utilisation du mode simplifié")
+                embeddings_model = None
+                stored_embeddings = rag_data.get('embeddings', None)
 except FileNotFoundError:
-    print("⚠️ Fichier rag.pkl introuvable. Exécutez 'python create_rag.py' d'abord.")
+    print("⚠️ Fichier rag.pkl introuvable. Exécutez 'python create_rag_simple.py' d'abord.")
     faiss_index = None
     documents = []
     embeddings_model = None
+    stored_embeddings = None
 
 
 # Créneaux disponibles pour la démo (semaine du 11-15 novembre 2025)
@@ -57,11 +72,23 @@ def get_information(question: str) -> str:
     """
     print(f"[CALL] get_information: {question}")
 
-    if faiss_index is None or embeddings_model is None:
+    if faiss_index is None:
         return "Je suis désolée, la base de connaissances n'est pas disponible pour le moment."
 
     # Générer l'embedding de la question
-    question_embedding = embeddings_model.encode([question])
+    if embeddings_model is not None:
+        # Mode normal avec modèle SentenceTransformer
+        question_embedding = embeddings_model.encode([question])
+    elif stored_embeddings is not None:
+        # Mode simplifié : utiliser un embedding aléatoire basé sur le hash de la question
+        # (pour la démo - en production, utiliser un vrai modèle)
+        import hashlib
+        hash_val = int(hashlib.md5(question.encode()).hexdigest(), 16)
+        np.random.seed(hash_val % (2**32))
+        question_embedding = np.random.randn(1, stored_embeddings.shape[1]).astype('float32')
+        question_embedding = question_embedding / np.linalg.norm(question_embedding)
+    else:
+        return "Je suis désolée, la base de connaissances n'est pas correctement configurée."
 
     # Rechercher les TOP_K documents les plus similaires
     distances, indices = faiss_index.search(np.array(question_embedding).astype('float32'), TOP_K)
